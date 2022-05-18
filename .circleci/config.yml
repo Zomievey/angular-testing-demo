@@ -6,8 +6,15 @@ jobs:
       ‐ image: circleci/node:10-browsers
     steps:
       ‐ checkout
-      ‐ restore_cache:
-          key: my-project-{{ .Branch }}-{{ checksum "package-lock.json" }}
+       steps:
+      - restore_cache:
+          keys:
+            # Find a cache corresponding to this specific package-lock.json checksum
+            # when this file is changed, this key will fail
+            - v1-npm-deps-{{ checksum "package-lock.json" }}
+            # Find the most recently generated cache used from any branch
+            - v1-npm-deps-
+
       ‐ run: npm install
       ‐ save_cache:
           key: my-project-{{ .Branch }}-{{ checksum "package-lock.json" }}
